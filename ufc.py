@@ -88,23 +88,26 @@ def get_ufc_stats(url):
         else:
             str_tds.append("0")
 
-    fighter = {
-        'strikes': {
-            'attempted': str_tds[1],
-            'landed': str_tds[0],
-            'standing': distance[0].split(" ")[0],
-            'clinch': distance[1].split(" ")[0],
-            'ground': distance[2].split(" ")[0],
-            'striking defense': stats[4].strip(),
-            'strikes per minute': stats[0].strip()
-        },
-        'takedowns': {
-            'attempted': str_tds[3],
-            'landed': str_tds[2],
-            'takedown defense':stats[5].strip(),
-            'subs per 15min': stats[3].strip()
+    try:
+        fighter = {
+            'strikes': {
+                'attempted': str_tds[1] if str_tds else "0",
+                'landed': str_tds[0] if str_tds else "0",
+                'standing': distance[0].split(" ")[0],
+                'clinch': distance[1].split(" ")[0],
+                'ground': distance[2].split(" ")[0],
+                'striking defense': stats[4].strip(),
+                'strikes per minute': stats[0].strip()
+            },
+            'takedowns': {
+                'attempted': str_tds[3] if str_tds else "0",
+                'landed': str_tds[2] if str_tds else "0",
+                'takedown defense':stats[5].strip(),
+                'subs per 15min': stats[3].strip()
+            }
         }
-    }
+    except IndexError:
+        print("IndexError: list index out of range")
     return fighter
 
 def search(query):
