@@ -2,8 +2,11 @@ import requests as req
 from lxml import html
 import datetime as dt
 import math
+import sys
 import re
 
+
+        
 def parse_sherdog_fighter(url):
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"}
     htm = req.get(url, headers = headers)
@@ -23,7 +26,7 @@ def parse_sherdog_fighter(url):
 
     fighter = {
         'name' : xml.xpath("//span[@class='fn']/text()")[0],
-        'nickname' : bio.xpath("//span[@class='nickname']/em/text()")[0],
+        'nickname' : bio.xpath("//span[@class='nickname']/em/text()")[0] if bio.xpath("//span[@class='nickname']/em/text()") else '',
         'nationality' : bio.xpath("//strong[@itemprop='nationality']/text()")[0],
         'birthplace' : xml.xpath("//span[@class='locality']/text()")[0],
         'birthdate' : xml.xpath("//span[@itemprop='birthDate']/text()")[0],
@@ -64,7 +67,7 @@ def parse_sherdog_fighter(url):
             'date': row.xpath("td[3]/span/text()")[0],
             'url': "https://www.sherdog.com" + row.xpath("td[3]/a/@href")[0],
             'result': row.xpath("td[1]/span/text()")[0],
-            'method': row.xpath("td[4]/b/text()")[0],
+            'method': row.xpath("td[4]/b/text()")[0] if row.xpath("td[4]/b/text()") else "unknown",
             'referee': referee,
             'round': row.xpath("td[5]/text()")[0],
             'time': row.xpath("td[6]/text()")[0],
@@ -138,6 +141,13 @@ def get_fighter(query):
     fighter = parse_sherdog_fighter(sherdog_link)
     fighter.update(get_ufc_stats(ufc_link))
     return fighter
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        query = " ".join(sys.argv[1:])  # Join all arguments as a single query string
+        print(get_fighter(query))
+    else:
+        print("Please provide a fighter's name.")
 
 
 def get_upcoming_event_links():
