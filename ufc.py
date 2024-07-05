@@ -54,7 +54,7 @@ def parse_sherdog_fighter(url):
         'fights' : []
     }
 
-    fight_rows = xml.xpath("//table[@class='new_table fighter']/tr[not(@class='table_head')]")
+    fight_rows = xml.xpath("(//table[@class='new_table fighter'])[1]/tr[not(@class='table_head')]")
 
     for row in fight_rows:
         try:
